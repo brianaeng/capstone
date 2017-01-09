@@ -1,20 +1,48 @@
-{% extends 'base.html' %}
+{% load render_bundle from webpack_loader %}
+{% load static %}
 
-{% block content %}
-  <ul>
-    {% for conversation in conversations %}
-      <li>
-        {{ conversation }}
-      </li>
-    {% endfor %}
-  </ul>
+<html>
+  <head>
+    <title>Pitchy</title>
+    <!-- <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"> -->
+    <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
+    <link rel="stylesheet" href="{% static 'css/skeleton.css' %}">
+    <link rel="stylesheet" href="{% static 'css/pitchy.css' %}">
 
-  <ul>
-    {% for item in messages %}
-      <li>
-        {{ item }}
-      </li>
-    {% endfor %}
-  </ul>
+  </head>
+  <body>
+    <div class="page-header">
+      <script src="{% static 'vendor/jquery.js' %}"></script>
+      <script src="{% static 'vendor/underscore.js' %}"></script>
+      <script src="{% static 'vendor/backbone.js' %}"></script>
+      <script src="{% static 'js/app.js' %}"></script>
+      <h2 id="site-nav"><a href="/">Pitchy</a></h2>
+      <nav id="other-nav">
+        {% if request.user.is_authenticated %}
+          <a href="/hub">Hub</a>
+          <a href="/messages">Messages</a>
+          <a href="{% url 'update_profile' %}">Profile</a>
+          <a href="/logout">Sign Out</a>
+        {% else %}
+          <a href="/login">Login</a>
+          <a href="/signup">Sign Up</a>
+        {% endif %}
+      </nav>
 
-{% endblock content %}
+    </div>
+
+    <!-- THIS IS WHERE BACKBONE STUFF GOES -->
+    <div class="content container">
+
+      <div class="conversation-list">
+
+      </div>
+
+
+      <div class="message-list">
+
+      </div>
+    </div>
+  </body>
+</html>
