@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Profile, Friendship, Focus, User, Conversation, DirectMessage
-from forms import UserForm, ProfileForm, SignUpForm
+from forms import UserForm, ProfileForm, SignUpForm#, ConversationForm, DirectMessageForm
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView, FormView
@@ -86,10 +86,8 @@ class UpdateProfileView(LoginRequiredMixin, FormView):
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            messages.success(request, ('Your profile was successfully updated!'))
             return redirect('/')
         else:
-            messages.error(request, ('Please correct the error below.'))
             return render(request, self.template_name, {
                 'user_form': user_form,
                 'profile_form': profile_form
@@ -146,8 +144,33 @@ class ConnectionsView(LoginRequiredMixin, TemplateView):
         return render(request, self.template_name, {'friends': friends, 'friend_requests': friend_requests, 'recommendations': recommendations})
 
 #This is to allow the user to find the person they want to chat, and then pass that to start_chat?
-# def create_chat(request):
+class ConversationView(LoginRequiredMixin, TemplateView):
+    template_name = 'chat/new_conversation.html'
 
+    def get(self, request):
+        # friendships = Friendship.objects.exclude(confirmed=False).filter(Q(user=request.user) | Q(friend=request.user))
+        #
+        # friends = []
+        #
+        # for friendship in friendships:
+        #     if friendship.user != request.user:
+        #         friends.append(friendship.user)
+        #     else:
+        #         friends.append(friendship.friend)
+
+        convo_form = ConversationForm()
+        return render(request, self.template_name, {'convo_form': convo_form})
+
+    def post(self, request):
+        convo_form = ConversationForm(request.POST)
+
+        label = haikunator.haikunate()
+
+        convo_form.label = label
+        convo_form.user1 = request.user
+        convo_form.save()
+
+        return redirect(chat_room, label=label)
 
 #This starts a chat with a pre-determined friend via their pk
 def start_chat(request, pk):
